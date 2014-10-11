@@ -2,6 +2,7 @@ package ch.smartapes.linguaadhoc.android;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -54,6 +55,19 @@ public class DBQueryHelper {
 				classesHR[i] = cursor.getString(0);
 			}
 		}
+
+		List<String> classesCutList = new ArrayList<String>();
+		List<String> classesHRCutList = new ArrayList<String>();
+
+		for (int i = 0; i < classesHR.length; i++) {
+			if (classesHR[i] != null) {
+				classesCutList.add(classes[i]);
+				classesHRCutList.add(classesHR[i]);
+			}
+		}
+
+		classes = classesCutList.toArray(new String[] {});
+		classesHR = classesHRCutList.toArray(new String[] {});
 
 		WordClassifications wcs = new WordClassifications(classes, classesHR);
 		return wcs;
