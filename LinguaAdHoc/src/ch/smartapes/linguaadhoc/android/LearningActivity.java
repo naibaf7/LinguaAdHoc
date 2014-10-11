@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
@@ -132,6 +134,8 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 		} else {
 			current = wordPairs.get(currentPos);
+			textTitle.setText(getString(R.string.topic) + ": "
+					+ current.getTopic());
 			textText.setText(current.getLanguage1());
 			textCount.setText(String.valueOf(currentPos + 1) + "/"
 					+ String.valueOf(wordPairs.size()));
@@ -149,7 +153,7 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 		loc.setLatitude(47.3845531d);
 		loc.setLongitude(8.5747292d);
-		
+
 		POIFetcherTask task = new POIFetcherTask();
 
 		task.addListener(this);
@@ -160,7 +164,7 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 	@Override
 	public void poisReady(List<WordCriteria> wcl) {
-		List<String> contexts = new ArrayList<String>();
+		final List<String> contexts = new ArrayList<String>();
 		for (WordCriteria wc : wcl) {
 			for (int i = 0; i < wc.getClassificators().length; i++) {
 				String cont = wc.getClassificators()[i];
@@ -170,20 +174,45 @@ public class LearningActivity extends Activity implements POIFetchListener {
 			}
 		}
 
-		DBQueryHelper dbqh = new DBQueryHelper(dbah);
+		final MultiSelectorDialog msd = new MultiSelectorDialog(
+				getString(R.string.select_interests), new String[] { "a", "b",
+						"c", "d", "e", "f", "g", "h", "i", "j" },
+				LearningActivity.this);
 
-		WordClassifications wordClassifications = dbqh
-				.getClassifications(contexts.toArray(new String[] {}));
+		msd.getDialogBuilder().setPositiveButton(R.string.ok,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						ArrayList selected = msd.getSelectedItems();
+						ArrayList<String> contextsNew = new ArrayList<String>();
+						for (Object o : selected) {
+							contextsNew.add(contexts.get((Integer) o));
+						}
+						fetchPairs(contexts);
+					}
+				});
+		msd.getDialogBuilder().setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						fetchPairs(contexts);
+					}
+				});
+		AlertDialog ad = msd.getDialogBuilder().create();
+		ad.show();
+
+		progressDialog.cancel();
+
+	}
+
+	private void fetchPairs(List<String> contexts) {
+		DBQueryHelper dbqh = new DBQueryHelper(dbah);
 
 		currentPos = -1;
 		wordPairs = dbqh.getWordPairs(contexts.toArray(new String[] {}), 30);
-		textTitle.setText(getString(R.string.topics) + ": "
-				+ wordClassifications.toStringHR());
 		if (wordPairs.size() > 0) {
 			advance();
 		}
-		progressDialog.cancel();
-
 	}
 
 }

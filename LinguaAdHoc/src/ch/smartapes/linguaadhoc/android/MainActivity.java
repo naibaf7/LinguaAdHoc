@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(
 						"com.google.zxing.client.android.SCAN");
-				// intent.putExtra("SCAN_MODE", "");
+				intent.putExtra("SCAN_MODE", "TEXT");
 				startActivityForResult(intent, 0);
 			}
 		});

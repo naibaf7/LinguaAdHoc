@@ -28,9 +28,9 @@ public class DBQueryHelper {
 		}
 		List<WordPair> lwp = new ArrayList<WordPair>();
 		Cursor cursor = sqldb.rawQuery(
-				"SELECT A.language1, A.language2 FROM words A "
-						+ "JOIN (SELECT C.idWord FROM belongsto C JOIN "
-						+ "(SELECT _id FROM classifications WHERE "
+				"SELECT A.language1, A.language2, B.name FROM words A "
+						+ "JOIN (SELECT C.idWord, D.name FROM belongsto C JOIN "
+						+ "(SELECT _id, name FROM classifications WHERE "
 						+ compareSB.toString()
 						+ ") D ON C.idClassification == D._id) B "
 						+ "ON A._id == B.idWord ORDER BY RANDOM() LIMIT "
@@ -38,7 +38,8 @@ public class DBQueryHelper {
 		while (cursor.moveToNext()) {
 			String l1 = cursor.getString(1);
 			String l2 = cursor.getString(0);
-			WordPair wp = new WordPair(l1, l2);
+			String t = cursor.getString(2);
+			WordPair wp = new WordPair(l1, l2, t);
 			lwp.add(wp);
 		}
 
