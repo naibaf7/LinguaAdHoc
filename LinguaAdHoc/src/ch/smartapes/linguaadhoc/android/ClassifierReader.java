@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 
@@ -28,10 +29,10 @@ public class ClassifierReader {
 		}
 		return classifiers;
 	}
-	
-	public static ArrayList<String> convertTags(ArrayList<String> tags){
+
+	public static ArrayList<String> convertTags(List<String> tags) {
 		ArrayList<String> classifiers = new ArrayList<String>();
-		for(String s : tags){
+		for (String s : tags) {
 			String str = s.replace("_", " _");
 			String[] names = str.split("_");
 			String name = "";
