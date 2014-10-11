@@ -1,6 +1,7 @@
 package ch.smartapes.linguaadhoc.android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -93,7 +94,8 @@ public class MainActivity extends Activity {
 							public void onClick(DialogInterface dialog, int id) {
 							}
 						});
-				msd.getDialogBuilder().create();
+				AlertDialog ad = msd.getDialogBuilder().create();
+				ad.show();
 			}
 		});
 

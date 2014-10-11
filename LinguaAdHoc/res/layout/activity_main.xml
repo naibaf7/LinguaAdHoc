@@ -33,7 +33,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/button_picture_context"
-        android:text="@string/fetch_context_from_picture" />
+        android:text="@string/select_interests" />
 
     <ToggleButton
         android:id="@+id/button_learning_service"
