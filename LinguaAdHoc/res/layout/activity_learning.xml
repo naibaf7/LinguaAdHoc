@@ -8,5 +8,4 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.smartapes.linguaadhoc.android.MainActivity" >
 
-
 </RelativeLayout>
