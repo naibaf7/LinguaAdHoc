@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import ch.smartapes.linguaadhoc.R;
 import ch.smartapes.linguaadhoc.android.POIFetcherTask.POIFetchListener;
@@ -27,11 +28,11 @@ public class LearningActivity extends Activity implements POIFetchListener {
 	private float pitch2 = 1.0f;
 	private float speed2 = 1.0f;
 
-	private Button buttonNotLearned;
-	private Button buttonFavourite;
-	private Button buttonFlip;
-	private Button buttonSpeak;
-	private Button buttonLearned;
+	private ImageButton buttonNotLearned;
+	private ImageButton buttonFavourite;
+	private ImageButton buttonFlip;
+	private ImageButton buttonSpeak;
+	private ImageButton buttonLearned;
 
 	private TextView textCount;
 	private TextView textTitle;
@@ -47,6 +48,8 @@ public class LearningActivity extends Activity implements POIFetchListener {
 	private List<WordPair> wordPairs;
 
 	private DBAccessHelper dbah;
+
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +69,11 @@ public class LearningActivity extends Activity implements POIFetchListener {
 		textText = (TextView) findViewById(R.id.learning_text);
 		textCount = (TextView) findViewById(R.id.learning_count);
 
-		buttonNotLearned = (Button) findViewById(R.id.button_not_learned);
-		buttonFavourite = (Button) findViewById(R.id.button_favourite);
-		buttonFlip = (Button) findViewById(R.id.button_flip);
-		buttonSpeak = (Button) findViewById(R.id.button_speak);
-		buttonLearned = (Button) findViewById(R.id.button_learned);
+		buttonNotLearned = (ImageButton) findViewById(R.id.button_not_learned);
+		buttonFavourite = (ImageButton) findViewById(R.id.button_favourite);
+		buttonFlip = (ImageButton) findViewById(R.id.button_flip);
+		buttonSpeak = (ImageButton) findViewById(R.id.button_speak);
+		buttonLearned = (ImageButton) findViewById(R.id.button_learned);
 
 		buttonFlip.setOnClickListener(new OnClickListener() {
 			@Override
@@ -136,6 +139,12 @@ public class LearningActivity extends Activity implements POIFetchListener {
 	}
 
 	private void newWordPairs() {
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setTitle(getResources().getString(R.string.loading));
+		progressDialog.setMessage(getResources().getString(R.string.wait_load));
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+
 		Location loc = locc.getLoc();
 
 		POIFetcherTask task = new POIFetcherTask();
@@ -148,7 +157,6 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 	@Override
 	public void poisReady(List<WordCriteria> wcl) {
-
 		List<String> contexts = new ArrayList<String>();
 		for (WordCriteria wc : wcl) {
 			for (int i = 0; i < wc.getClassificators().length; i++) {
@@ -171,6 +179,8 @@ public class LearningActivity extends Activity implements POIFetchListener {
 		if (wordPairs.size() > 0) {
 			advance();
 		}
+		progressDialog.cancel();
+
 	}
 
 }
