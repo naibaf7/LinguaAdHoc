@@ -2,6 +2,7 @@ package ch.smartapes.linguaadhoc.android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,14 @@ public class MainActivity extends Activity {
 	private Button buttonLearningActivity;
 	private ToggleButton buttonLearningService;
 	private Button buttonPictureContext;
+
+	@Override
+	protected void onResume() {
+		SharedPreferences spf = getSharedPreferences("ServicePrefs", 0);
+		if (spf.getBoolean("ServiceEnabled", false)) {
+			button
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
