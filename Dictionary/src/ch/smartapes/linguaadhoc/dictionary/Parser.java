@@ -23,7 +23,7 @@ public class Parser {
 			con = DriverManager.getConnection("jdbc:sqlite:linguaadhoc.db");
 			con.setAutoCommit(false);
 			Statement stat = con.createStatement();
-			stat.executeUpdate("CREATE TABLE IF NOT EXISTS words(id INTEGER PRIMARY KEY AUTOINCREMENT, "
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS words(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ "language1 VARCHAR(255), language2 VARCHAR(255),"
 					+ "comment1 VARCHAR(255), comment2 VARCHAR(255));");
 

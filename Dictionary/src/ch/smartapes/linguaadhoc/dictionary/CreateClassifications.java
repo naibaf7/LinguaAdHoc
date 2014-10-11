@@ -22,8 +22,8 @@ public class CreateClassifications {
 			con = DriverManager.getConnection("jdbc:sqlite:linguaadhoc.db");
 			con.setAutoCommit(false);
 			Statement stat = con.createStatement();
-			stat.executeQuery("DROP TABLE IF EXISTS classifications;");
-			stat.executeUpdate("CREATE TABLE IF NOT EXISTS classifications(id INTEGER PRIMARY KEY AUTOINCREMENT, "
+			stat.executeUpdate("DROP TABLE IF EXISTS classifications;");
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS classifications(_id INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ "tag VARCHAR(128), name VARCHAR(128));");
 
 			st_insert_classification = con
@@ -68,8 +68,13 @@ public class CreateClassifications {
 				}
 				else{
 					st_insert_classification.setString(1, line);
-					String name = line.replace("_", " ");
-					//TODO: First letters to uppercase
+					line = line.replace("_", " _");
+					String[] names = line.split("_");
+					String name="";
+					for(int i = 0; i < names.length; i++){
+						name = name.concat(names[i].substring(0, 1).toUpperCase().concat(names[i].substring(1,names[i].length())));
+					}
+					System.out.println(name);
 					st_insert_classification.setString(2, name);					
 				}
 				st_insert_classification.addBatch();
