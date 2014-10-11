@@ -3,6 +3,7 @@ package ch.smartapes.linguaadhoc.android;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Notification;
@@ -32,8 +33,6 @@ public class LearningService extends Service implements POIFetchListener {
 	private TTSSynth tts1;
 	private TTSSynth tts2;
 
-	TimerTask task;
-
 	private WordPair current;
 	private List<WordPair> wordPairs;
 
@@ -46,6 +45,7 @@ public class LearningService extends Service implements POIFetchListener {
 
 	@Override
 	public void onCreate() {
+		super.onCreate();
 		locc = new LocationContext(this);
 
 		dbah = new DBAccessHelper(this, "en_de.sqlite");
@@ -61,35 +61,28 @@ public class LearningService extends Service implements POIFetchListener {
 
 	@Override
 	public void onDestroy() {
+		super.onDestroy();
 		cancelNotification();
 	}
 
 	private void learnBackground() {
-		task = new TimerTask() {
-
-			@Override
-			public void run() {
-				for (int i = 0; i < wordPairs.size(); i++) {
-					current = wordPairs.get(i);
-					pushNotification(current.getLanguage1());
-					tts1.speak(current.getLanguage1());
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-					}
-					pushNotification(current.getLanguage1()+" -> "+current.getLanguage2());
-					tts2.speak(current.getLanguage2());
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-					}
-				}
-				newWordPairs();
-				task.cancel();
+		for (int i = 0; i < wordPairs.size(); i++) {
+			current = wordPairs.get(i);
+			pushNotification(current.getLanguage1());
+			tts1.speak(current.getLanguage1());
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
 			}
-		};
-		task.scheduledExecutionTime();
-		task.run();
+			pushNotification(current.getLanguage1() + " -> "
+					+ current.getLanguage2());
+			tts2.speak(current.getLanguage2());
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+			}
+		}
+		newWordPairs();
 	}
 
 	private void newWordPairs() {
@@ -122,19 +115,23 @@ public class LearningService extends Service implements POIFetchListener {
 			learnBackground();
 		}
 	}
-	
+
 	private void pushNotification(String text) {
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Notification.Builder notificationBuilder = new Notification.Builder(this);
+		Notification.Builder notificationBuilder = new Notification.Builder(
+				this);
 		notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
-		notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+		notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(
+				getResources(), R.drawable.ic_launcher));
 		notificationBuilder.setAutoCancel(false);
 		notificationBuilder.setOngoing(true);
-		notificationBuilder.setContentTitle(getResources().getString(R.string.app_name));
+		notificationBuilder.setContentTitle(getResources().getString(
+				R.string.app_name));
 		notificationBuilder.setContentText(text);
 		notificationBuilder.setWhen(System.currentTimeMillis());
 		Intent intent = new Intent(this, MainActivity.class);
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+				intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		notificationBuilder.setContentIntent(pendingIntent);
 		notificationManager.notify(0, notificationBuilder.build());
 	}
@@ -145,4 +142,26 @@ public class LearningService extends Service implements POIFetchListener {
 
 	}
 	
+	class TaskFront extends TimerTask
+	{
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	class TaskBack extends TimerTask
+	{
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+
 }
