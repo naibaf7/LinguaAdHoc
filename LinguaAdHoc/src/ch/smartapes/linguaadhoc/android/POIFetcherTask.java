@@ -19,12 +19,20 @@ public class POIFetcherTask extends AsyncTask<String, Void, Void> {
 
 	List<WordCriteria> wcl;
 
-	public interface POIListener {
+	private List<POIFetchListener> listenerList = new ArrayList<POIFetchListener>();
 
+	public void addListener(POIFetchListener listener) {
+		listenerList.add(listener);
 	}
 
-	protected void onDataReady() {
+	public interface POIFetchListener {
+		public void poisReady(List<WordCriteria> wcl);
+	}
 
+	public void poisReady() {
+		for (POIFetchListener listener : listenerList) {
+			listener.poisReady(wcl);
+		}
 	}
 
 	@Override
@@ -38,6 +46,11 @@ public class POIFetcherTask extends AsyncTask<String, Void, Void> {
 					+ "json?location=" + params[0] + "," + params[1]
 					+ "&radius=" + params[2] + "&sensor=true" + "&types="
 					+ params[3]
+					+ "&key=AIzaSyC7WzPDnLgGyRnFlw9UAW_hPNiIGtHMBrw";
+		} else if (params.length == 3) {
+			param = "https://maps.googleapis.com/maps/api/place/nearbysearch/"
+					+ "json?location=" + params[0] + "," + params[1]
+					+ "&radius=" + params[2] + "&sensor=true"
 					+ "&key=AIzaSyC7WzPDnLgGyRnFlw9UAW_hPNiIGtHMBrw";
 		} else {
 			Log.d(LOG_TAG, "Not enough parameters specified!");

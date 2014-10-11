@@ -1,20 +1,25 @@
 package ch.smartapes.linguaadhoc.android;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import ch.smartapes.linguaadhoc.R;
+import ch.smartapes.linguaadhoc.android.POIFetcherTask.POIFetchListener;
 
-public class LearningActivity extends Activity {
+public class LearningActivity extends Activity implements POIFetchListener {
 
 	private String language1 = "en";
 	private String language2 = "de";
+
+	private LocationContext locc;
 
 	private float pitch1 = 1.0f;
 	private float speed1 = 1.0f;
@@ -48,6 +53,8 @@ public class LearningActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_learning);
+
+		locc = new LocationContext(this);
 
 		dbah = new DBAccessHelper(this, "en_de.sqlite");
 		dbah.createDB();
@@ -119,9 +126,9 @@ public class LearningActivity extends Activity {
 	private void advance() {
 		flipSide = false;
 		currentPos++;
-		if (currentPos >= wordPairs.size()) {
+		if (wordPairs == null || currentPos >= wordPairs.size()) {
 			newWordPairs();
-			advance();
+
 		} else {
 			current = wordPairs.get(currentPos);
 			textText.setText(current.getLanguage1());
@@ -131,13 +138,39 @@ public class LearningActivity extends Activity {
 	}
 
 	private void newWordPairs() {
+		Location loc = locc.getLoc();
+
+		new POIFetcherTask().execute(new String[] {
+				String.valueOf(loc.getLatitude()),
+				String.valueOf(loc.getLongitude()), "100" });
+
+	}
+
+	@Override
+	public void poisReady(List<WordCriteria> wcl) {
+
+		List<String> contexts = new ArrayList<String>();
+		for (WordCriteria wc : wcl) {
+			for (int i = 0; i < wc.getClassificators().length; i++) {
+				String cont = wc.getClassificators()[i];
+				if (!contexts.contains(cont)) {
+					contexts.add(cont);
+				}
+			}
+		}
+
+		DBQueryHelper dbqh = new DBQueryHelper(dbah);
+
+		WordClassifications wordClassifications = dbqh
+				.getClassifications(contexts.toArray(new String[] {}));
+
 		currentPos = -1;
-		wordPairs = (new DBQueryHelper(dbah)).getWordPairs(
-				new String[] { "zoo" }, 30);
-		wordClassifications = new WordClassifications(new String[] { "testing",
-				"fun" }, new String[] { "Testing", "Fun" });
+		wordPairs = dbqh.getWordPairs(contexts.toArray(new String[] {}), 30);
 		textTitle.setText(getString(R.string.topics) + ": "
 				+ wordClassifications.toStringHR());
+		if (wordPairs.size() > 0) {
+			advance();
+		}
 	}
 
 }

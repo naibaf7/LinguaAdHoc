@@ -9,6 +9,7 @@ import android.os.Bundle;
 public class LocationContext implements LocationListener {
 
 	private Context context;
+	
 
 	public LocationContext(Context context) {
 		this.context = context;

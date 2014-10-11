@@ -18,12 +18,12 @@ public class DBQueryHelper {
 		StringBuilder compareSB = new StringBuilder();
 		for (int i = 0; i < strings.length - 1; i++) {
 			compareSB.append("tag == ");
-			compareSB.append("'"+strings[i]+"'");
+			compareSB.append("'" + strings[i] + "'");
 			compareSB.append(" OR ");
 		}
 		if (strings.length > 0) {
 			compareSB.append("tag == ");
-			compareSB.append("'"+strings[strings.length - 1]+"'");
+			compareSB.append("'" + strings[strings.length - 1] + "'");
 		}
 		List<WordPair> lwp = new ArrayList<WordPair>();
 		Cursor cursor = sqldb.rawQuery(
@@ -42,5 +42,20 @@ public class DBQueryHelper {
 		}
 
 		return lwp;
+	}
+
+	public WordClassifications getClassifications(String[] classes) {
+		String[] classesHR = new String[classes.length];
+		for (int i = 0; i < classes.length; i++) {
+			Cursor cursor = sqldb.rawQuery(
+					"SELECT name FROM classifications WHERE tag == '"
+							+ classes[i] + "' LIMIT 1;", null);
+			while (cursor.moveToNext()) {
+				classesHR[i] = cursor.getString(0);
+			}
+		}
+
+		WordClassifications wcs = new WordClassifications(classes, classesHR);
+		return wcs;
 	}
 }
