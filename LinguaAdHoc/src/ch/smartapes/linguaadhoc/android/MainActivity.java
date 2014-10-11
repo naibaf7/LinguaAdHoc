@@ -93,23 +93,27 @@ public class MainActivity extends Activity {
 							public void onClick(DialogInterface dialog, int id) {
 								SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
 								Editor edit = spf.edit();
+								int ind = 0;
+								int next;
 								if (msd.getSelectedItems().size() > 0){
 									//Write interests in preferences
-									int ind = 0; //index in selectedItems
-									int next = (int) msd.getSelectedItems().get(0); //Next checked element
-									for(int i = 0; i < tags.size(); i++ ){
-										if (i == next){
-											edit.putBoolean(tags.get(i), true);
-											ind++;
-											if (msd.getSelectedItems().size() < ind){
-												next = (int) msd.getSelectedItems().get(ind);
-											}
-										}
-										else{
-											edit.putBoolean(tags.get(i), false);
+									next = (int) msd.getSelectedItems().get(0); //Next checked element
+								}else{
+									next = -1; //there is no
+								}
+								for(int i = 0; i < tags.size(); i++ ){
+									if (i == next){
+										edit.putBoolean(tags.get(i), true);
+										ind++;
+										if (msd.getSelectedItems().size() < ind){
+											next = (int) msd.getSelectedItems().get(ind);
 										}
 									}
+									else{
+										edit.putBoolean(tags.get(i), false);
+									}
 								}
+								
 								edit.commit();
 							}
 						});
