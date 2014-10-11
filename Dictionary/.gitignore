@@ -1,0 +1,8 @@
+# Specific folders #
+####################
+
+# Dictionary
+/bin
+/.settings
+/gen
+linguaadhoc.db
