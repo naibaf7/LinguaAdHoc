@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
@@ -164,7 +165,7 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 	@Override
 	public void poisReady(List<WordCriteria> wcl) {
-		final List<String> contexts = new ArrayList<String>();
+		List<String> contexts = new ArrayList<String>();
 		for (WordCriteria wc : wcl) {
 			for (int i = 0; i < wc.getClassificators().length; i++) {
 				String cont = wc.getClassificators()[i];
@@ -174,10 +175,28 @@ public class LearningActivity extends Activity implements POIFetchListener {
 			}
 		}
 
+		ArrayList selected = new ArrayList();
+		
+		final ArrayList<String> actualContexts = new ArrayList();
+		
+		SharedPreferences spf = getSharedPreferences(
+				"InterestPrefs", 0);
+		
+		int i = 0;
+		for(String context : contexts)
+		{
+			if(spf.contains(context))
+			{
+				actualContexts.add(context);
+				selected.add(i);
+				i++;
+			}
+		}
+		
 		final MultiSelectorDialog msd = new MultiSelectorDialog(
 				getString(R.string.select_interests), ClassifierReader
-						.convertTags(contexts).toArray(new String[] {}),
-				LearningActivity.this);
+						.convertTags(actualContexts).toArray(new String[] {}),
+				LearningActivity.this, selected);
 
 		msd.getDialogBuilder().setPositiveButton(R.string.ok,
 				new DialogInterface.OnClickListener() {
@@ -186,16 +205,16 @@ public class LearningActivity extends Activity implements POIFetchListener {
 						ArrayList selected = msd.getSelectedItems();
 						ArrayList<String> contextsNew = new ArrayList<String>();
 						for (Object o : selected) {
-							contextsNew.add(contexts.get((Integer) o));
+							contextsNew.add(actualContexts.get((Integer) o));
 						}
-						fetchPairs(contexts);
+						fetchPairs(actualContexts);
 					}
 				});
 		msd.getDialogBuilder().setNegativeButton(R.string.cancel,
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						fetchPairs(contexts);
+						fetchPairs(actualContexts);
 					}
 				});
 		AlertDialog ad = msd.getDialogBuilder().create();

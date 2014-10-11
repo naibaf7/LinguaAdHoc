@@ -80,40 +80,59 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				
-				final ArrayList<String> tags = ClassifierReader.readClassifiers(MainActivity.this);
-				ArrayList<String> classifiers = ClassifierReader.convertTags(tags);
-				System.out.println(classifiers.size());
-				final MultiSelectorDialog msd = new MultiSelectorDialog(getString(R.string.select_interests), classifiers.toArray(new String[classifiers.size()]),
-						MainActivity.this);
+
+				final ArrayList<String> tags = ClassifierReader
+						.readClassifiers(MainActivity.this);
+				ArrayList<String> classifiers = ClassifierReader
+						.convertTags(tags);
+
+				SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+
+				ArrayList selected = new ArrayList();
+
+				int i = 0;
+				for (String tag : tags) {
+					if (spf.getBoolean(tag, true)) {
+						selected.add(i);
+					}
+					i++;
+				}
+
+				final MultiSelectorDialog msd = new MultiSelectorDialog(
+						getString(R.string.select_interests), classifiers
+								.toArray(new String[classifiers.size()]),
+						MainActivity.this, new ArrayList());
 
 				msd.getDialogBuilder().setPositiveButton(R.string.ok,
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+								SharedPreferences spf = getSharedPreferences(
+										"InterestPrefs", 0);
 								Editor edit = spf.edit();
 								int ind = 0;
 								int next;
-								if (msd.getSelectedItems().size() > 0){
-									//Write interests in preferences
-									next = (int) msd.getSelectedItems().get(0); //Next checked element
-								}else{
-									next = -1; //there is no
+								if (msd.getSelectedItems().size() > 0) {
+									// Write interests in preferences
+									next = (Integer) msd.getSelectedItems()
+											.get(0); // Next checked element
+								} else {
+									next = -1; // there is no
 								}
-								for(int i = 0; i < tags.size(); i++ ){
-									if (i == next){
+								for (int i = 0; i < tags.size(); i++) {
+									if (i == next) {
 										edit.putBoolean(tags.get(i), true);
 										ind++;
-										if (msd.getSelectedItems().size() < ind){
-											next = (int) msd.getSelectedItems().get(ind);
+										if (msd.getSelectedItems().size() < ind) {
+											next = (Integer) msd
+													.getSelectedItems()
+													.get(ind);
 										}
-									}
-									else{
+									} else {
 										edit.putBoolean(tags.get(i), false);
 									}
 								}
-								
+
 								edit.commit();
 							}
 						});
@@ -129,5 +148,4 @@ public class MainActivity extends Activity {
 		});
 
 	}
-
 }
