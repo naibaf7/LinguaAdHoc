@@ -36,8 +36,11 @@ public class LocationContext implements LocationListener {
 			location = locationManager
 					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 			// Fallback
-			if (location == null) {
+			if (location != null) {
 				isNET = false;
+			}
+			else{
+				isNET = true;
 			}
 		}
 		if (isNET) {
@@ -50,7 +53,9 @@ public class LocationContext implements LocationListener {
 			location = locationManager
 					.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		}
-
+		if (location == null){
+			location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		}
 		return location;
 	}
 

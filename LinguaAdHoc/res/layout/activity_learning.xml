@@ -53,35 +53,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="X" />
+            android:background = "@drawable/wrong_answer" />
 
         <Button
             android:id="@+id/button_favourite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Fav" />
+            android:background = "@drawable/favorite" />
 
         <Button
             android:id="@+id/button_flip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="&lt;>" />
+            android:background="@drawable/change_language" />
 
         <Button
             android:id="@+id/button_speak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="|&lt;" />
+            android:background = "@drawable/play_sound" />
 
         <Button
             android:id="@+id/button_learned"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Y" />
+
+            android:background="@drawable/dialog_ok"/>
     </LinearLayout>
 
 </LinearLayout>
