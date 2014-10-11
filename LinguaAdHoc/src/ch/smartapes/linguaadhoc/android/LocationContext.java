@@ -9,11 +9,11 @@ import android.os.Bundle;
 public class LocationContext implements LocationListener {
 
 	private Context context;
-	
+
 	public LocationContext(Context context) {
 		this.context = context;
 	}
-	
+
 	public Location getLoc() {
 		Location location = null;
 
@@ -55,27 +55,18 @@ public class LocationContext implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-
 	}
-	
-	
+
 }
