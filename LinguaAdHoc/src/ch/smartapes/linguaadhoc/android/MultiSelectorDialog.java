@@ -22,7 +22,7 @@ public class MultiSelectorDialog {
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle(title);
-		builder.setMultiChoiceItems(values, null,
+		builder.setMultiChoiceItems(values, checked,
 				new DialogInterface.OnMultiChoiceClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which,
