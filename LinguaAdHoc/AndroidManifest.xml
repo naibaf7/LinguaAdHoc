@@ -5,7 +5,7 @@
     android:versionName="0.1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -34,7 +34,7 @@
             android:theme="@android:style/Theme.NoTitleBar" />
 
         <service
-            android:name=".LearningService"
+            android:name="ch.smartapes.linguaadhoc.android.LearningService"
             android:enabled="true" />
     </application>
 

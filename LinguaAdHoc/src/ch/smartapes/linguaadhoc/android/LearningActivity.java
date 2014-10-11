@@ -44,7 +44,6 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 	private int currentPos;
 	private WordPair current;
-	private WordClassifications wordClassifications;
 	private List<WordPair> wordPairs;
 
 	private DBAccessHelper dbah;

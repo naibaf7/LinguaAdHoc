@@ -1,15 +1,148 @@
 package ch.smartapes.linguaadhoc.android;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimerTask;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.IBinder;
+import ch.smartapes.linguaadhoc.R;
+import ch.smartapes.linguaadhoc.android.POIFetcherTask.POIFetchListener;
 
-public class LearningService extends Service {
+public class LearningService extends Service implements POIFetchListener {
+
+	private LocationContext locc;
+
+	private float pitch1 = 1.0f;
+	private float speed1 = 1.0f;
+
+	private float pitch2 = 1.0f;
+	private float speed2 = 1.0f;
+
+	private String language1 = "en";
+	private String language2 = "de";
+
+	private TTSSynth tts1;
+	private TTSSynth tts2;
+
+	TimerTask task;
+
+	private WordPair current;
+	private List<WordPair> wordPairs;
+
+	private DBAccessHelper dbah;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public void onCreate() {
+		locc = new LocationContext(this);
+
+		dbah = new DBAccessHelper(this, "en_de.sqlite");
+		dbah.createDB();
+		dbah.openDB();
+
+		tts1 = new TTSSynth(this, speed1, pitch1, new Locale(language1));
+		tts2 = new TTSSynth(this, speed2, pitch2, new Locale(language2));
+
+		newWordPairs();
+
+	}
+
+	@Override
+	public void onDestroy() {
+		cancelNotification();
+	}
+
+	private void learnBackground() {
+		task = new TimerTask() {
+
+			@Override
+			public void run() {
+				for (int i = 0; i < wordPairs.size(); i++) {
+					current = wordPairs.get(i);
+					pushNotification(current.getLanguage1());
+					tts1.speak(current.getLanguage1());
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+					}
+					pushNotification(current.getLanguage1()+" -> "+current.getLanguage2());
+					tts2.speak(current.getLanguage2());
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+					}
+				}
+				newWordPairs();
+				task.cancel();
+			}
+		};
+		task.scheduledExecutionTime();
+		task.run();
+	}
+
+	private void newWordPairs() {
+		Location loc = locc.getLoc();
+
+		POIFetcherTask task = new POIFetcherTask();
+
+		task.addListener(this);
+		task.execute(new String[] { String.valueOf(loc.getLatitude()),
+				String.valueOf(loc.getLongitude()), "100" });
+	}
+
+	@Override
+	public void poisReady(List<WordCriteria> wcl) {
+
+		List<String> contexts = new ArrayList<String>();
+		for (WordCriteria wc : wcl) {
+			for (int i = 0; i < wc.getClassificators().length; i++) {
+				String cont = wc.getClassificators()[i];
+				if (!contexts.contains(cont)) {
+					contexts.add(cont);
+				}
+			}
+		}
+
+		DBQueryHelper dbqh = new DBQueryHelper(dbah);
+		wordPairs = dbqh.getWordPairs(contexts.toArray(new String[] {}), 30);
+
+		if (wordPairs.size() > 0) {
+			learnBackground();
+		}
+	}
+	
+	private void pushNotification(String text) {
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		Notification.Builder notificationBuilder = new Notification.Builder(this);
+		notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+		notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+		notificationBuilder.setAutoCancel(false);
+		notificationBuilder.setOngoing(true);
+		notificationBuilder.setContentTitle(getResources().getString(R.string.app_name));
+		notificationBuilder.setContentText(text);
+		notificationBuilder.setWhen(System.currentTimeMillis());
+		Intent intent = new Intent(this, MainActivity.class);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		notificationBuilder.setContentIntent(pendingIntent);
+		notificationManager.notify(0, notificationBuilder.build());
+	}
+
+	private void cancelNotification() {
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		notificationManager.cancel(0);
+
+	}
+	
 }
