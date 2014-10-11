@@ -1,13 +1,13 @@
 package ch.smartapes.linguaadhoc.android;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -79,7 +79,10 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				MultiSelectorDialog msd = new MultiSelectorDialog(getString(R.string.select_interests), new String[] {"a","b","c","d","e","f","g","h","i","j"},
+				
+				ArrayList<String> classifiers = ClassifierReader.convertTags(ClassifierReader.readClassifiers(MainActivity.this));
+				System.out.println(classifiers.size());
+				MultiSelectorDialog msd = new MultiSelectorDialog(getString(R.string.select_interests), classifiers.toArray(new String[classifiers.size()]),
 						MainActivity.this);
 
 				msd.getDialogBuilder().setPositiveButton(R.string.ok,
