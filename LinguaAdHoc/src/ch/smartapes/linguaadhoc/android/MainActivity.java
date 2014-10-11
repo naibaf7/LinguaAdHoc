@@ -79,8 +79,8 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				MultiSelectorDialog msd = new MultiSelectorDialog(new String[] {"a","b","c","d","e","f","g","h","i","j"},
-						getApplicationContext());
+				MultiSelectorDialog msd = new MultiSelectorDialog(getString(R.string.select_interests), new String[] {"a","b","c","d","e","f","g","h","i","j"},
+						MainActivity.this);
 
 				msd.getDialogBuilder().setPositiveButton(R.string.ok,
 						new DialogInterface.OnClickListener() {

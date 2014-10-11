@@ -12,10 +12,10 @@ public class MultiSelectorDialog {
 
 	private AlertDialog.Builder alertDialogBuilder;
 
-	public MultiSelectorDialog(String[] values, Context context) {
+	public MultiSelectorDialog(String title, String[] values, Context context) {
 		selectedItems = new ArrayList();
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		builder.setTitle("PLACEHOLDER");
+		builder.setTitle(title);
 		builder.setMultiChoiceItems(values, null,
 				new DialogInterface.OnMultiChoiceClickListener() {
 					@Override
