@@ -20,10 +20,10 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onResume() {
+		super.onResume();
 		SharedPreferences spf = getSharedPreferences("ServicePrefs", 0);
-		if (spf.getBoolean("ServiceEnabled", false)) {
-			button
-		}
+		buttonLearningService.setChecked(spf
+				.getBoolean("ServiceEnabled", false));
 	};
 
 	@Override

@@ -158,6 +158,12 @@ public class LearningService extends Service implements POIFetchListener {
 				current = wordPairs.get(currentPos);
 				pushNotification(current.getLanguage1());
 				tts1.speak(current.getLanguage1());
+				try {
+					timer1.cancel();
+					timer2.cancel();
+				} catch (Exception e) {
+				}
+				timer2 = new Timer();
 				timer2.schedule(new TaskBack(), 4000);
 			} else {
 				newWordPairs();
@@ -172,6 +178,12 @@ public class LearningService extends Service implements POIFetchListener {
 		public void run() {
 			pushNotification(current.getLanguage2());
 			tts2.speak(current.getLanguage2());
+			try {
+				timer1.cancel();
+				timer2.cancel();
+			} catch (Exception e) {
+			}
+			timer1 = new Timer();
 			timer1.schedule(new TaskFront(), 8000);
 		}
 
