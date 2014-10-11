@@ -25,10 +25,10 @@ public class Parser {
 			Statement stat = con.createStatement();
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS words(id INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ "language1 VARCHAR(255), language2 VARCHAR(255),"
-					+ "comment1 VARCHAR(255), comment2 VARCHAR(255))");
+					+ "comment1 VARCHAR(255), comment2 VARCHAR(255));");
 
 			st_insert_word = con
-					.prepareStatement("INSERT INTO words(language1, language2, comment1, comment2) VALUES(?,?,?,?)");
+					.prepareStatement("INSERT INTO words(language1, language2, comment1, comment2) VALUES(?,?,?,?);");
 
 			Parser parser = new Parser();
 			parser.parse();
