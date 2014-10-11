@@ -51,7 +51,6 @@ public class CreateClassifications {
 			int count = 0;
 			String line;
 
-			System.out.println(reader.readLine());
 			while ((line = reader.readLine()) != null) {
 				count++;
 				if (line.startsWith("#") || line.isEmpty()) {
