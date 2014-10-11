@@ -100,6 +100,13 @@ public class LearningActivity extends Activity {
 			}
 		});
 
+		buttonFavourite.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+
 		newWordPairs();
 		advance();
 	}
