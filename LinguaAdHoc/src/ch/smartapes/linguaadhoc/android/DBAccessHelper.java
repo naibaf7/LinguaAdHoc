@@ -1,25 +1,28 @@
 package ch.smartapes.linguaadhoc.android;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBAccessHelper extends SQLiteOpenHelper {
 
-	private static String DB_PATH = "/data/data/ch.smartapes.linguaadhoc.android/databases/";
-
 	private SQLiteDatabase sqldb;
 
+	private final String name;
+	private final String dbPath;
 	private final Context context;
 
 	public DBAccessHelper(Context context, String name) {
 		super(context, name, null, 1);
+		this.dbPath = context.getDatabasePath(name).getAbsolutePath();
 		this.context = context;
-		openDB();
+		this.name = name;
 	}
 
 	@Override
@@ -34,37 +37,47 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 	}
 
 	public void createDB() {
-		boolean exists = checkExists();
+		boolean exists = checkDB();
 		if (exists) {
 
 		} else {
 			this.getReadableDatabase();
-			try {
-				copyDB();
-			} catch (IOException e) {
-
-			}
+			copyDB();
 		}
 	}
 
 	public synchronized void copyDB() {
-
+		try {
+			InputStream is = context.getAssets().open(name);
+			OutputStream os = new FileOutputStream(dbPath);
+			byte[] buffer = new byte[4 * 1024];
+			int length;
+			while ((length = is.read(buffer)) > 0) {
+				os.write(buffer, 0, length);
+			}
+			os.flush();
+			os.close();
+			is.close();
+		} catch (IOException e) {
+		}
 	}
 
 	public synchronized void openDB() {
-		sqldb = 
+		sqldb = SQLiteDatabase.openDatabase(dbPath, null,
+				SQLiteDatabase.OPEN_READWRITE
+						| SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 	}
 
 	public synchronized boolean checkDB() {
 		SQLiteDatabase sqrdb = null;
 		try {
-			sqrdb = SQLiteDatabase.openDatabase(path, null,
-					SQLiteDatabase.OPEN_READONLY);
+			sqrdb = SQLiteDatabase.openDatabase(dbPath, null,
+					SQLiteDatabase.OPEN_READONLY
+							| SQLiteDatabase.NO_LOCALIZED_COLLATORS);
 		} catch (SQLiteException e) {
 			return false;
 		}
-		if(sqrdb != null)
-		{
+		if (sqrdb != null) {
 			sqrdb.close();
 		}
 		return sqrdb != null;
@@ -75,5 +88,9 @@ public class DBAccessHelper extends SQLiteOpenHelper {
 			sqldb.close();
 			sqldb = null;
 		}
+	}
+
+	public SQLiteDatabase getDatabase() {
+		return sqldb;
 	}
 }

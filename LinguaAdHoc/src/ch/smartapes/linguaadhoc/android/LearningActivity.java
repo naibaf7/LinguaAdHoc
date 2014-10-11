@@ -1,6 +1,5 @@
 package ch.smartapes.linguaadhoc.android;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,10 +42,16 @@ public class LearningActivity extends Activity {
 	private WordClassifications wordClassifications;
 	private List<WordPair> wordPairs;
 
+	private DBAccessHelper dbah;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_learning);
+
+		dbah = new DBAccessHelper(this, "en_de.sqlite");
+		dbah.createDB();
+		dbah.openDB();
 
 		tts1 = new TTSSynth(this, speed1, pitch1, new Locale(language1));
 		tts2 = new TTSSynth(this, speed2, pitch2, new Locale(language2));
@@ -127,9 +132,8 @@ public class LearningActivity extends Activity {
 
 	private void newWordPairs() {
 		currentPos = -1;
-		wordPairs = new LinkedList<WordPair>();
-		wordPairs.add(new WordPair("Hello", "Hallo"));
-		wordPairs.add(new WordPair("Church", "Kirche"));
+		wordPairs = (new DBQueryHelper(dbah)).getWordPairs(
+				new String[] { "zoo" }, 30);
 		wordClassifications = new WordClassifications(new String[] { "testing",
 				"fun" }, new String[] { "Testing", "Fun" });
 		textTitle.setText(getString(R.string.topics) + ": "

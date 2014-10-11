@@ -8,5 +8,6 @@
     <string name="background_learning_on">Background learning ON</string>
     <string name="background_learning_off">Background learning OFF</string>
     <string name="topics">Topics</string>
+    <string name="fetch_context_from_picture">Fetch context from picture</string>
     
 </resources>

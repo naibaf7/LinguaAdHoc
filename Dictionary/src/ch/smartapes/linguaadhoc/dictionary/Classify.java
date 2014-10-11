@@ -56,7 +56,7 @@ public class Classify {
 				
 				for (int k = 0; k < depth; k++) {
 					// Closure
-				rs = 
+				//rs = 
 				}
 			}
 			else{

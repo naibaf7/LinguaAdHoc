@@ -1,13 +1,7 @@
 package ch.smartapes.linguaadhoc.android;
 
-import java.util.Locale;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +15,7 @@ public class MainActivity extends Activity {
 
 	private Button buttonLearningActivity;
 	private ToggleButton buttonLearningService;
+	private Button buttonPictureContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +31,9 @@ public class MainActivity extends Activity {
 		 * "food|bar|store|museum|art_gallery" });
 		 */
 
-		// TTSSynth ttsDe = new TTSSynth(this, 0.8f, 1.0f, new Locale("de"));
-		// ttsDe.speak("Monozytenzytotoxizität!");
-		// TTSSynth ttsEn = new TTSSynth(this, 0.8f, 1.0f, new Locale("en"));
-		// ttsEn.speak("Hell !");
-
 		buttonLearningActivity = (Button) findViewById(R.id.button_learning_activity);
 		buttonLearningService = (ToggleButton) findViewById(R.id.button_learning_service);
+		buttonPictureContext = (Button) findViewById(R.id.button_picture_context);
 
 		buttonLearningActivity.setOnClickListener(new OnClickListener() {
 			@Override
@@ -68,6 +59,16 @@ public class MainActivity extends Activity {
 							.setAction("ch.smartapes.linguaadhoc.android.LearningService");
 					stopService(serviceIntent);
 				}
+			}
+		});
+		
+		buttonPictureContext.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+				//intent.putExtra("SCAN_MODE", "");
+				startActivityForResult(intent, 0);
 			}
 		});
 
