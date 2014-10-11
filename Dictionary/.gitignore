@@ -4,5 +4,5 @@
 # Dictionary
 /bin
 /.settings
-/gen
-linguaadhoc.db
+/en_de.sqlite
+*.db-journal
