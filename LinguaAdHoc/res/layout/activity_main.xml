@@ -26,13 +26,22 @@
         android:layout_below="@+id/button_learning_activity"
         android:text="@string/fetch_context_from_picture" />
 
+    <Button
+        android:id="@+id/button_select_interests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/button_picture_context"
+        android:text="@string/fetch_context_from_picture" />
+
     <ToggleButton
         android:id="@+id/button_learning_service"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/button_picture_context"
+        android:layout_below="@+id/button_select_interests"
         android:textOff="@string/background_learning_off"
         android:textOn="@string/background_learning_on" />
 

@@ -11,5 +11,7 @@
     <string name="fetch_context_from_picture">Fetch context from picture</string>
     <string name="loading">Loading</string>
     <string name="wait_load">Please wait</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     
 </resources>
