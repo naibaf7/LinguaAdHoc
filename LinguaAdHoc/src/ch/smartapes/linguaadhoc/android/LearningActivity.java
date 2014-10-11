@@ -175,8 +175,8 @@ public class LearningActivity extends Activity implements POIFetchListener {
 		}
 
 		final MultiSelectorDialog msd = new MultiSelectorDialog(
-				getString(R.string.select_interests), new String[] { "a", "b",
-						"c", "d", "e", "f", "g", "h", "i", "j" },
+				getString(R.string.select_interests), ClassifierReader
+						.convertTags(contexts).toArray(new String[] {}),
 				LearningActivity.this);
 
 		msd.getDialogBuilder().setPositiveButton(R.string.ok,
