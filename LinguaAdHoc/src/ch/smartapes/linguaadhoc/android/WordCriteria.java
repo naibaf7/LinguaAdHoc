@@ -18,4 +18,18 @@ public class WordCriteria {
 		return classificators;
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		sb.append(" --> [");
+		for (int i = 0; i < classificators.length - 1; i++) {
+			sb.append(classificators[i]);
+			sb.append(", ");
+		}
+		if (classificators.length > 0) {
+			sb.append(classificators[classificators.length - 1]);
+		}
+		sb.append("]");
+		return sb.toString();
+	}
 }
