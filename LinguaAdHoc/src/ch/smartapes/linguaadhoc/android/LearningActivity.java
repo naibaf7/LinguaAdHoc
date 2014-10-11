@@ -120,7 +120,6 @@ public class LearningActivity extends Activity implements POIFetchListener {
 		});
 
 		newWordPairs();
-		advance();
 	}
 
 	private void advance() {
@@ -140,8 +139,10 @@ public class LearningActivity extends Activity implements POIFetchListener {
 	private void newWordPairs() {
 		Location loc = locc.getLoc();
 
-		new POIFetcherTask().execute(new String[] {
-				String.valueOf(loc.getLatitude()),
+		POIFetcherTask task = new POIFetcherTask();
+
+		task.addListener(this);
+		task.execute(new String[] { String.valueOf(loc.getLatitude()),
 				String.valueOf(loc.getLongitude()), "100" });
 
 	}
