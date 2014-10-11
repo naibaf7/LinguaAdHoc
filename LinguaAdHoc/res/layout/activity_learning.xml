@@ -19,7 +19,7 @@
             android:id="@+id/learning_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="4"
             android:gravity="center"
             android:text="PLACEHOLDER_TITLE"
             android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -28,10 +28,19 @@
             android:id="@+id/learning_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="6"
             android:gravity="center"
             android:text="PLACEHOLDER_TEXT"
             android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/learning_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="PLACEHOLDER_COUNT"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
     <LinearLayout

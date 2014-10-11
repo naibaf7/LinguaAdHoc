@@ -29,6 +29,7 @@ public class LearningActivity extends Activity {
 	private Button buttonSpeak;
 	private Button buttonLearned;
 
+	private TextView textCount;
 	private TextView textTitle;
 	private TextView textText;
 
@@ -52,6 +53,7 @@ public class LearningActivity extends Activity {
 
 		textTitle = (TextView) findViewById(R.id.learning_title);
 		textText = (TextView) findViewById(R.id.learning_text);
+		textCount = (TextView) findViewById(R.id.learning_count);
 
 		buttonNotLearned = (Button) findViewById(R.id.button_not_learned);
 		buttonFavourite = (Button) findViewById(R.id.button_favourite);
@@ -111,6 +113,8 @@ public class LearningActivity extends Activity {
 		} else {
 			current = wordPairs.get(currentPos);
 			textText.setText(current.getLanguage1());
+			textCount.setText(String.valueOf(currentPos + 1) + "/"
+					+ String.valueOf(wordPairs.size()));
 		}
 	}
 
@@ -121,7 +125,7 @@ public class LearningActivity extends Activity {
 		wordPairs.add(new WordPair("Church", "Kirche"));
 		wordClassifications = new WordClassifications(new String[] { "testing",
 				"fun" }, new String[] { "Testing", "Fun" });
-		textTitle.setText(getString(R.string.topics)+": "
+		textTitle.setText(getString(R.string.topics) + ": "
 				+ wordClassifications.toStringHR());
 	}
 
