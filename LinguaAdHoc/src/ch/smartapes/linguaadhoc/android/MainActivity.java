@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,15 +81,40 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				
-				ArrayList<String> classifiers = ClassifierReader.convertTags(ClassifierReader.readClassifiers(MainActivity.this));
+				final ArrayList<String> tags = ClassifierReader.readClassifiers(MainActivity.this);
+				ArrayList<String> classifiers = ClassifierReader.convertTags(tags);
 				System.out.println(classifiers.size());
-				MultiSelectorDialog msd = new MultiSelectorDialog(getString(R.string.select_interests), classifiers.toArray(new String[classifiers.size()]),
+				final MultiSelectorDialog msd = new MultiSelectorDialog(getString(R.string.select_interests), classifiers.toArray(new String[classifiers.size()]),
 						MainActivity.this);
 
 				msd.getDialogBuilder().setPositiveButton(R.string.ok,
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
+								SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+								Editor edit = spf.edit();
+								int ind = 0;
+								int next;
+								if (msd.getSelectedItems().size() > 0){
+									//Write interests in preferences
+									next = (int) msd.getSelectedItems().get(0); //Next checked element
+								}else{
+									next = -1; //there is no
+								}
+								for(int i = 0; i < tags.size(); i++ ){
+									if (i == next){
+										edit.putBoolean(tags.get(i), true);
+										ind++;
+										if (msd.getSelectedItems().size() < ind){
+											next = (int) msd.getSelectedItems().get(ind);
+										}
+									}
+									else{
+										edit.putBoolean(tags.get(i), false);
+									}
+								}
+								
+								edit.commit();
 							}
 						});
 				msd.getDialogBuilder().setNegativeButton(R.string.cancel,

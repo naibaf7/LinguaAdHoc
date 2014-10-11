@@ -29,10 +29,10 @@ public class ClassifierReader {
 		}
 		return classifiers;
 	}
-	
-	public static ArrayList<String> convertTags(List<String> tags){
+
+	public static ArrayList<String> convertTags(List<String> tags) {
 		ArrayList<String> classifiers = new ArrayList<String>();
-		for(String s : tags){
+		for (String s : tags) {
 			String str = s.replace("_", " _");
 			String[] names = str.split("_");
 			String name = "";
