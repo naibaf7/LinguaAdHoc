@@ -1,6 +1,7 @@
 package ch.smartapes.linguaadhoc.android;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ public class MainActivity extends Activity {
 	private Button buttonLearningActivity;
 	private ToggleButton buttonLearningService;
 	private Button buttonPictureContext;
+	private Button buttonSelectInterests;
 
 	@Override
 	protected void onResume() {
@@ -34,6 +36,7 @@ public class MainActivity extends Activity {
 		buttonLearningActivity = (Button) findViewById(R.id.button_learning_activity);
 		buttonLearningService = (ToggleButton) findViewById(R.id.button_learning_service);
 		buttonPictureContext = (Button) findViewById(R.id.button_picture_context);
+		buttonSelectInterests = (Button) findViewById(R.id.button_select_interests);
 
 		buttonLearningActivity.setOnClickListener(new OnClickListener() {
 			@Override
@@ -68,6 +71,29 @@ public class MainActivity extends Activity {
 						"com.google.zxing.client.android.SCAN");
 				// intent.putExtra("SCAN_MODE", "");
 				startActivityForResult(intent, 0);
+			}
+		});
+
+		buttonSelectInterests.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				MultiSelectorDialog msd = new MultiSelectorDialog(values,
+						getApplicationContext());
+
+				msd.getDialogBuilder().setPositiveButton(R.string.ok,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+							}
+						});
+				msd.getDialogBuilder().setNegativeButton(R.string.cancel,
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+							}
+						});
+				msd.getDialogBuilder().create();
 			}
 		});
 
