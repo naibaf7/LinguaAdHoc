@@ -12,9 +12,14 @@ public class MultiSelectorDialog {
 
 	private AlertDialog.Builder alertDialogBuilder;
 
-	public MultiSelectorDialog(String title, String[] values, Context context, ArrayList selected) {
+	public MultiSelectorDialog(String title, String[] values, Context context,
+			ArrayList selected) {
 		selectedItems = new ArrayList();
 		selectedItems.addAll(selected);
+		boolean checked[] = new boolean[values.length];
+		for (int i = 0; i < selected.size(); i++) {
+			checked[(Integer) selected.get(i)] = true;
+		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle(title);
 		builder.setMultiChoiceItems(values, null,

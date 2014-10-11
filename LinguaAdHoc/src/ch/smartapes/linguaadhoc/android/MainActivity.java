@@ -35,6 +35,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		preconfigureInterests();
+
 		buttonLearningActivity = (Button) findViewById(R.id.button_learning_activity);
 		buttonLearningService = (ToggleButton) findViewById(R.id.button_learning_service);
 		buttonPictureContext = (Button) findViewById(R.id.button_picture_context);
@@ -101,7 +103,7 @@ public class MainActivity extends Activity {
 				final MultiSelectorDialog msd = new MultiSelectorDialog(
 						getString(R.string.select_interests), classifiers
 								.toArray(new String[classifiers.size()]),
-						MainActivity.this, new ArrayList());
+						MainActivity.this, selected);
 
 				msd.getDialogBuilder().setPositiveButton(R.string.ok,
 						new DialogInterface.OnClickListener() {
@@ -148,4 +150,20 @@ public class MainActivity extends Activity {
 		});
 
 	}
+
+	private void preconfigureInterests() {
+		final ArrayList<String> tags = ClassifierReader
+				.readClassifiers(MainActivity.this);
+
+		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+		Editor edit = spf.edit();
+
+		for (String tag : tags) {
+			if (!spf.contains(tag)) {
+				edit.putBoolean(tag, true);
+			}
+		}
+		edit.commit();
+	}
+
 }
