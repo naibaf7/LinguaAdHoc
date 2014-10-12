@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -17,9 +18,11 @@ import ch.smartapes.linguaadhoc.R;
 
 public class MainActivity extends Activity {
 
+	public final static int REQUEST_CODE_VOICE = 5;
+
 	private Button buttonLearningActivity;
 	private ToggleButton buttonLearningService;
-	private Button buttonPictureContext;
+	private Button buttonVoiceContext;
 	private Button buttonSelectInterests;
 
 	private MultiSelectorDialog multiSelectorDialog;
@@ -41,7 +44,7 @@ public class MainActivity extends Activity {
 
 		buttonLearningActivity = (Button) findViewById(R.id.button_learning_activity);
 		buttonLearningService = (ToggleButton) findViewById(R.id.button_learning_service);
-		buttonPictureContext = (Button) findViewById(R.id.button_picture_context);
+		buttonVoiceContext = (Button) findViewById(R.id.button_voice_context);
 		buttonSelectInterests = (Button) findViewById(R.id.button_select_interests);
 
 		buttonLearningActivity.setOnClickListener(new OnClickListener() {
@@ -69,14 +72,10 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		buttonPictureContext.setOnClickListener(new OnClickListener() {
-
+		buttonVoiceContext.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(
-						"com.google.zxing.client.android.SCAN");
-				intent.putExtra("SCAN_MODE", "TEXT");
-				startActivityForResult(intent, 0);
+				startVoiceRecognitiony();
 			}
 		});
 
@@ -133,6 +132,24 @@ public class MainActivity extends Activity {
 				ad.show();
 			}
 		});
+	}
+
+	private void startVoiceRecognitiony() {
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Voice recognition!");
+		startActivityForResult(intent, REQUEST_CODE_VOICE);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_CODE_VOICE && resultCode == RESULT_OK) {
+			ArrayList<String> matches = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+			matches.toString();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private void selectAllInterest(ArrayList<String> tags) {

@@ -157,9 +157,6 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 		Location loc = locc.getLoc();
 
-		// loc.setLatitude(47.3845531d);
-		// loc.setLongitude(8.5747292d);
-
 		POIFetcherTask task = new POIFetcherTask();
 
 		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);

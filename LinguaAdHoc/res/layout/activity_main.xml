@@ -18,13 +18,13 @@
         android:text="@string/start_learning" />
 
     <Button
-        android:id="@+id/button_picture_context"
+        android:id="@+id/button_voice_context"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/button_learning_activity"
-        android:text="@string/fetch_context_from_picture" />
+        android:text="@string/fetch_context_from_voice" />
 
     <Button
         android:id="@+id/button_select_interests"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/button_picture_context"
+        android:layout_below="@+id/button_voice_context"
         android:text="@string/select_interests" />
 
     <ToggleButton

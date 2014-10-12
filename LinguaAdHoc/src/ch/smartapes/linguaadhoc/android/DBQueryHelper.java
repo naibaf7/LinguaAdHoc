@@ -15,6 +15,22 @@ public class DBQueryHelper {
 		sqldb = dah.getDatabase();
 	}
 
+	public WordClassifications getClassificationFromToken(String token) {
+		Cursor cursor = sqldb.rawQuery("SELECT DISTINCT "
+				+ "A.name, A.tag FROM (SELECT idClassification FROM "
+				+ "((SELECT _id FROM words WHERE language1 LIKE '%" + token
+				+ "%' " + "OR language2 LIKE '%" + token
+				+ "%') C JOIN belongsto D ON C._id == D.idWord)) B "
+				+ "JOIN classifications A ON A._id == B.idClassification;",
+				null);
+		
+		while(cursor.moveToNext())
+		{
+			
+		}
+		
+	}
+
 	public List<WordPair> getWordPairs(String[] strings, int count) {
 		StringBuilder compareSB = new StringBuilder();
 		for (int i = 0; i < strings.length - 1; i++) {
@@ -27,14 +43,15 @@ public class DBQueryHelper {
 			compareSB.append("'" + strings[strings.length - 1] + "'");
 		}
 		List<WordPair> lwp = new ArrayList<WordPair>();
-		Cursor cursor = sqldb.rawQuery(
-				"SELECT A.language1, A.language2, B.name FROM words A "
-						+ "JOIN (SELECT C.idWord, D.name FROM belongsto C JOIN "
-						+ "(SELECT _id, name FROM classifications WHERE "
-						+ compareSB.toString()
-						+ ") D ON C.idClassification == D._id) B "
-						+ "ON A._id == B.idWord ORDER BY RANDOM() LIMIT "
-						+ String.valueOf(count) + ";", null);
+		Cursor cursor = sqldb
+				.rawQuery(
+						"SELECT A.language1, A.language2, B.name FROM words A "
+								+ "JOIN (SELECT C.idWord, D.name FROM belongsto C JOIN "
+								+ "(SELECT _id, name FROM classifications WHERE "
+								+ compareSB.toString()
+								+ ") D ON C.idClassification == D._id) B "
+								+ "ON A._id == B.idWord ORDER BY RANDOM() LIMIT "
+								+ String.valueOf(count) + ";", null);
 		while (cursor.moveToNext()) {
 			String l1 = cursor.getString(1);
 			String l2 = cursor.getString(0);
