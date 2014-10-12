@@ -24,7 +24,7 @@ church,relig.
 city_hall,adm.,pol.
 clothing_store,kleid
 convenience_store,laden
-courthouse,jur.,
+courthouse,jur.
 dentist,med.
 department_store,laden
 doctor,med.
@@ -65,7 +65,7 @@ movie_theater,film,kino
 moving_company,z_geln,m_bel
 museum,histor,museum
 night_club,nachtklub,tanzen
-painter,art
+painter,[art
 park,envir.
 parking,auto
 pet_store,zool.
