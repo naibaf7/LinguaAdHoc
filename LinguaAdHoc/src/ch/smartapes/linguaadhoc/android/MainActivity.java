@@ -213,7 +213,7 @@ public class MainActivity extends Activity {
 					ad.show();
 				} else {
 					Toast.makeText(this, getString(R.string.not_found)
-							+ ": '" + matches.get(0) + "'", 5000).show();
+							+ ": '" + matches.get(0) + "'", Toast.LENGTH_LONG).show();
 				}
 			}
 		}
