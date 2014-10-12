@@ -24,6 +24,26 @@ public class DBQueryHelper {
 				+ "JOIN classifications A ON A._id == B.idClassification;",
 				null);
 
+		if (cursor.getCount() == 0) {
+			cursor = sqldb.rawQuery("SELECT DISTINCT "
+					+ "A.name, A.tag FROM (SELECT idClassification FROM "
+					+ "((SELECT _id FROM words WHERE language1 LIKE '%" + token
+					+ "' " + "OR language2 LIKE '%" + token
+					+ "') C JOIN belongsto D ON C._id == D.idWord)) B "
+					+ "JOIN classifications A ON A._id == B.idClassification;",
+					null);
+		}
+
+		if (cursor.getCount() == 0) {
+			cursor = sqldb.rawQuery("SELECT DISTINCT "
+					+ "A.name, A.tag FROM (SELECT idClassification FROM "
+					+ "((SELECT _id FROM words WHERE language1 LIKE '%" + token
+					+ "%' " + "OR language2 LIKE '%" + token
+					+ "%') C JOIN belongsto D ON C._id == D.idWord)) B "
+					+ "JOIN classifications A ON A._id == B.idClassification;",
+					null);
+		}
+
 		List<String> classesList = new ArrayList<String>();
 		List<String> classesHRList = new ArrayList<String>();
 
