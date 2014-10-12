@@ -18,9 +18,9 @@ public class DBQueryHelper {
 	public WordClassifications getClassificationFromToken(String token) {
 		Cursor cursor = sqldb.rawQuery("SELECT DISTINCT "
 				+ "A.name, A.tag FROM (SELECT idClassification FROM "
-				+ "((SELECT _id FROM words WHERE language1 LIKE '%" + token
-				+ "%' " + "OR language2 LIKE '%" + token
-				+ "%') C JOIN belongsto D ON C._id == D.idWord)) B "
+				+ "((SELECT _id FROM words WHERE language1 LIKE '" + token
+				+ "' " + "OR language2 LIKE '" + token
+				+ "') C JOIN belongsto D ON C._id == D.idWord)) B "
 				+ "JOIN classifications A ON A._id == B.idClassification;",
 				null);
 

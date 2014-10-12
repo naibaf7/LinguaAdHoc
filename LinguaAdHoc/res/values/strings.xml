@@ -16,5 +16,6 @@
     <string name="select_interests">Select interests</string>
     <string name="all">All</string>
     <string name="none">None</string>
+    <string name="speech_recog">Speech</string>
 
 </resources>

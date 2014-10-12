@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +29,8 @@ public class MainActivity extends Activity {
 
 	private MultiSelectorDialog multiSelectorDialog;
 
+	private DBAccessHelper dbah;
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -39,6 +43,10 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		dbah = new DBAccessHelper(this, "en_de.sqlite");
+		dbah.createDB();
+		dbah.openDB();
 
 		preconfigureInterests();
 
@@ -147,7 +155,55 @@ public class MainActivity extends Activity {
 		if (requestCode == REQUEST_CODE_VOICE && resultCode == RESULT_OK) {
 			ArrayList<String> matches = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-			matches.toString();
+			if (matches.size() > 0) {
+				final WordClassifications wcs = new DBQueryHelper(dbah)
+						.getClassificationFromToken(matches.get(0));
+				if (wcs.getClasses().length > 0) {
+					ArrayList selected = new ArrayList();
+					for (int i = 0; i < wcs.getClasses().length; i++) {
+						selected.add(i);
+					}
+					final MultiSelectorDialog msd = new MultiSelectorDialog(
+							getString(R.string.speech_recog) + ": '"
+									+ matches.get(0) + "'", wcs.getClassesHR(),
+							MainActivity.this, selected);
+					msd.getDialogBuilder().setNegativeButton(
+							getString(R.string.cancel),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+
+								}
+							});
+					msd.getDialogBuilder().setPositiveButton(
+							getString(R.string.ok),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent intent = new Intent(
+											getApplicationContext(),
+											LearningActivity.class);
+
+									ArrayList selected = msd.getSelectedItems();
+									ArrayList<String> contexts = new ArrayList<String>();
+
+									for (Object o : selected) {
+										contexts.add(wcs.getClasses()[(Integer) o]);
+									}
+
+									intent.putExtra("DirectContext",
+											contexts.toArray(new String[] {}));
+									startActivity(intent);
+								}
+							});
+					AlertDialog ad = msd.getDialogBuilder().create();
+					ad.show();
+				}
+			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

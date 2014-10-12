@@ -59,10 +59,26 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 	private MultiSelectorDialog multiSelectorDialog;
 
+	private boolean directMode = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_learning);
+
+		try {
+			Intent intent = getIntent();
+			String[] directContext = intent.getExtras().getStringArray(
+					"DirectContext");
+			if (directContext != null) {
+				directMode = true;
+				actualContexts = new ArrayList<String>();
+				for (int i = 0; i < directContext.length; i++) {
+					actualContexts.add(directContext[i]);
+				}
+			}
+		} catch (Exception e) {
+		}
 
 		locc = new LocationContext(this);
 
@@ -155,31 +171,36 @@ public class LearningActivity extends Activity implements POIFetchListener {
 		progressDialog.setCancelable(false);
 		progressDialog.show();
 
-		Location loc = locc.getLoc();
+		if (!directMode) {
+			Location loc = locc.getLoc();
 
-		POIFetcherTask task = new POIFetcherTask();
+			POIFetcherTask task = new POIFetcherTask();
 
-		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
-		ArrayList<String> list = ClassifierReader.readClassifiers(this);
-		StringBuilder interestBuilder = new StringBuilder();
-		for (String listEntry : list) {
-			if (spf.getBoolean(listEntry, true)) {
-				interestBuilder.append(listEntry + "|");
+			SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+			ArrayList<String> list = ClassifierReader.readClassifiers(this);
+			StringBuilder interestBuilder = new StringBuilder();
+			for (String listEntry : list) {
+				if (spf.getBoolean(listEntry, true)) {
+					interestBuilder.append(listEntry + "|");
+				}
 			}
-		}
 
-		String interest = interestBuilder.toString();
+			String interest = interestBuilder.toString();
 
-		if (interest.length() > 0) {
-			interest = interest.substring(0, interest.length() - 1);
+			if (interest.length() > 0) {
+				interest = interest.substring(0, interest.length() - 1);
 
-			task.addListener(this);
-			task.execute(new String[] { String.valueOf(loc.getLatitude()),
-					String.valueOf(loc.getLongitude()), "100", interest });
+				task.addListener(this);
+				task.execute(new String[] { String.valueOf(loc.getLatitude()),
+						String.valueOf(loc.getLongitude()), "100", interest });
+			} else {
+				Intent intent = new Intent(this, MainActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
+			}
 		} else {
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
+			fetchPairs(actualContexts);
+			progressDialog.cancel();
 		}
 
 	}
