@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -27,6 +28,8 @@ public class MainActivity extends Activity {
 	private ToggleButton buttonLearningService;
 	private Button buttonVoiceContext;
 	private Button buttonSelectInterests;
+	
+	private ProgressDialog progressDialog;
 
 	private MultiSelectorDialog multiSelectorDialog;
 
@@ -144,6 +147,11 @@ public class MainActivity extends Activity {
 	}
 
 	private void startVoiceRecognitiony() {
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setTitle(getResources().getString(R.string.loading));
+		progressDialog.setMessage(getResources().getString(R.string.wait_load));
+		progressDialog.setCancelable(true);
+		progressDialog.show();
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -209,6 +217,7 @@ public class MainActivity extends Activity {
 				}
 			}
 		}
+		progressDialog.cancel();
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
