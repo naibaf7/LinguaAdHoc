@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -53,6 +54,10 @@ public class LearningActivity extends Activity implements POIFetchListener {
 	private DBAccessHelper dbah;
 
 	private ProgressDialog progressDialog;
+
+	private ArrayList<String> actualContexts;
+
+	private MultiSelectorDialog multiSelectorDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -152,14 +157,33 @@ public class LearningActivity extends Activity implements POIFetchListener {
 
 		Location loc = locc.getLoc();
 
-		loc.setLatitude(47.3845531d);
-		loc.setLongitude(8.5747292d);
+		// loc.setLatitude(47.3845531d);
+		// loc.setLongitude(8.5747292d);
 
 		POIFetcherTask task = new POIFetcherTask();
 
-		task.addListener(this);
-		task.execute(new String[] { String.valueOf(loc.getLatitude()),
-				String.valueOf(loc.getLongitude()), "100" });
+		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+		ArrayList<String> list = ClassifierReader.readClassifiers(this);
+		StringBuilder interestBuilder = new StringBuilder();
+		for (String listEntry : list) {
+			if (spf.getBoolean(listEntry, true)) {
+				interestBuilder.append(listEntry + "|");
+			}
+		}
+
+		String interest = interestBuilder.toString();
+
+		if (interest.length() > 0) {
+			interest = interest.substring(0, interest.length() - 1);
+
+			task.addListener(this);
+			task.execute(new String[] { String.valueOf(loc.getLatitude()),
+					String.valueOf(loc.getLongitude()), "100", interest });
+		} else {
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+		}
 
 	}
 
@@ -176,61 +200,69 @@ public class LearningActivity extends Activity implements POIFetchListener {
 		}
 
 		ArrayList selected = new ArrayList();
-		
-		final ArrayList<String> actualContexts = new ArrayList();
-		
-		SharedPreferences spf = getSharedPreferences(
-				"InterestPrefs", 0);
-		
+
+		actualContexts = new ArrayList();
+
+		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+
 		int i = 0;
-		for(String context : contexts)
-		{
-			if(spf.contains(context))
-			{
+		for (String context : contexts) {
+			if (spf.contains(context)) {
 				actualContexts.add(context);
 				selected.add(i);
 				i++;
 			}
 		}
-		
-		final MultiSelectorDialog msd = new MultiSelectorDialog(
+
+		multiSelectorDialog = new MultiSelectorDialog(
 				getString(R.string.select_interests), ClassifierReader
 						.convertTags(actualContexts).toArray(new String[] {}),
 				LearningActivity.this, selected);
 
-		msd.getDialogBuilder().setPositiveButton(R.string.ok,
+		multiSelectorDialog.getDialogBuilder().setPositiveButton(R.string.ok,
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						ArrayList selected = msd.getSelectedItems();
-						ArrayList<String> contextsNew = new ArrayList<String>();
-						for (Object o : selected) {
-							contextsNew.add(actualContexts.get((Integer) o));
-						}
-						fetchPairs(actualContexts);
+						updateInterests();
 					}
 				});
-		msd.getDialogBuilder().setNegativeButton(R.string.cancel,
-				new DialogInterface.OnClickListener() {
+		multiSelectorDialog.getDialogBuilder().setNegativeButton(
+				R.string.cancel, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						fetchPairs(actualContexts);
 					}
 				});
-		AlertDialog ad = msd.getDialogBuilder().create();
+		AlertDialog ad = multiSelectorDialog.getDialogBuilder().create();
 		ad.show();
 
 		progressDialog.cancel();
 
 	}
 
-	private void fetchPairs(List<String> contexts) {
-		DBQueryHelper dbqh = new DBQueryHelper(dbah);
+	private void updateInterests() {
+		ArrayList selected = multiSelectorDialog.getSelectedItems();
+		ArrayList<String> contextsNew = new ArrayList<String>();
+		for (Object o : selected) {
+			contextsNew.add(actualContexts.get((Integer) o));
+		}
+		fetchPairs(contextsNew);
+	}
 
-		currentPos = -1;
-		wordPairs = dbqh.getWordPairs(contexts.toArray(new String[] {}), 30);
-		if (wordPairs.size() > 0) {
-			advance();
+	private void fetchPairs(List<String> contexts) {
+		try {
+			DBQueryHelper dbqh = new DBQueryHelper(dbah);
+
+			currentPos = -1;
+			wordPairs = dbqh
+					.getWordPairs(contexts.toArray(new String[] {}), 30);
+			if (wordPairs.size() > 0) {
+				advance();
+			}
+		} catch (Exception e) {
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
 		}
 	}
 

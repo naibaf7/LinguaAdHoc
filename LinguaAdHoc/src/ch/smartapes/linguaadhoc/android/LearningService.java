@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -95,11 +96,32 @@ public class LearningService extends Service implements POIFetchListener {
 	private void newWordPairs() {
 		Location loc = locc.getLoc();
 
+		// loc.setLatitude(47.3845531d);
+		// loc.setLongitude(8.5747292d);
+
 		POIFetcherTask task = new POIFetcherTask();
 
-		task.addListener(this);
-		task.execute(new String[] { String.valueOf(loc.getLatitude()),
-				String.valueOf(loc.getLongitude()), "100" });
+		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+		ArrayList<String> list = ClassifierReader.readClassifiers(this);
+		StringBuilder interestBuilder = new StringBuilder();
+		for (String listEntry : list) {
+			if (spf.getBoolean(listEntry, true)) {
+				interestBuilder.append(listEntry + "|");
+			}
+		}
+
+		String interest = interestBuilder.toString();
+
+		if (interest.length() > 0) {
+			interest = interest.substring(0, interest.length() - 1);
+
+			task.addListener(this);
+			task.execute(new String[] { String.valueOf(loc.getLatitude()),
+					String.valueOf(loc.getLongitude()), "100", interest });
+		} else {
+			stopSelf();
+		}
+
 	}
 
 	@Override
