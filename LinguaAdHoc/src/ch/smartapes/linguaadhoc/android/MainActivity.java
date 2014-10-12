@@ -15,6 +15,7 @@ import android.speech.RecognizerIntent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import ch.smartapes.linguaadhoc.R;
 
@@ -202,6 +203,9 @@ public class MainActivity extends Activity {
 							});
 					AlertDialog ad = msd.getDialogBuilder().create();
 					ad.show();
+				} else {
+					Toast.makeText(this, getString(R.string.not_found)
+							+ ": '" + matches.get(0) + "'", 5000).show();
 				}
 			}
 		}

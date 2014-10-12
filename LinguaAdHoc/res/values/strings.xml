@@ -17,5 +17,6 @@
     <string name="all">All</string>
     <string name="none">None</string>
     <string name="speech_recog">Speech</string>
+    <string name="not_found">Not found</string>
 
 </resources>
