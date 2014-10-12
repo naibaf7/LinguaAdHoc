@@ -23,12 +23,17 @@ public class DBQueryHelper {
 				+ "%') C JOIN belongsto D ON C._id == D.idWord)) B "
 				+ "JOIN classifications A ON A._id == B.idClassification;",
 				null);
-		
-		while(cursor.moveToNext())
-		{
-			
+
+		List<String> classesList = new ArrayList<String>();
+		List<String> classesHRList = new ArrayList<String>();
+
+		while (cursor.moveToNext()) {
+			classesHRList.add(cursor.getString(0));
+			classesList.add(cursor.getString(1));
 		}
-		
+
+		return new WordClassifications(classesList.toArray(new String[] {}),
+				classesHRList.toArray(new String[] {}));
 	}
 
 	public List<WordPair> getWordPairs(String[] strings, int count) {
