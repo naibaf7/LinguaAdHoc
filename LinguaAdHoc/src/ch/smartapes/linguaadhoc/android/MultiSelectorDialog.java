@@ -27,9 +27,9 @@ public class MultiSelectorDialog {
 					@Override
 					public void onClick(DialogInterface dialog, int which,
 							boolean isChecked) {
-						if (isChecked) {
+						if (isChecked && !selectedItems.contains(which)) {
 							selectedItems.add(which);
-						} else if (selectedItems.contains(which)) {
+						} else if (!isChecked && selectedItems.contains(which)) {
 							selectedItems.remove(Integer.valueOf(which));
 						}
 					}

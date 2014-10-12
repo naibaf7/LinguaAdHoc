@@ -22,6 +22,8 @@ public class MainActivity extends Activity {
 	private Button buttonPictureContext;
 	private Button buttonSelectInterests;
 
+	private MultiSelectorDialog multiSelectorDialog;
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -100,55 +102,67 @@ public class MainActivity extends Activity {
 					i++;
 				}
 
-				final MultiSelectorDialog msd = new MultiSelectorDialog(
+				multiSelectorDialog = new MultiSelectorDialog(
 						getString(R.string.select_interests), classifiers
 								.toArray(new String[classifiers.size()]),
 						MainActivity.this, selected);
 
-				msd.getDialogBuilder().setPositiveButton(R.string.ok,
-						new DialogInterface.OnClickListener() {
+				multiSelectorDialog.getDialogBuilder().setPositiveButton(
+						R.string.ok, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								SharedPreferences spf = getSharedPreferences(
-										"InterestPrefs", 0);
-								Editor edit = spf.edit();
-								int ind = 0;
-								int next;
-								if (msd.getSelectedItems().size() > 0) {
-									// Write interests in preferences
-									next = (Integer) msd.getSelectedItems()
-											.get(0); // Next checked element
-								} else {
-									next = -1; // there is no
-								}
-								for (int i = 0; i < tags.size(); i++) {
-									if (i == next) {
-										edit.putBoolean(tags.get(i), true);
-										ind++;
-										if (msd.getSelectedItems().size() < ind) {
-											next = (Integer) msd
-													.getSelectedItems()
-													.get(ind);
-										}
-									} else {
-										edit.putBoolean(tags.get(i), false);
-									}
-								}
-
-								edit.commit();
+								updateInterests(tags);
 							}
 						});
-				msd.getDialogBuilder().setNegativeButton(R.string.cancel,
-						new DialogInterface.OnClickListener() {
+				multiSelectorDialog.getDialogBuilder().setNegativeButton(
+						R.string.none, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
+								selectNoInterests(tags);
 							}
 						});
-				AlertDialog ad = msd.getDialogBuilder().create();
+				multiSelectorDialog.getDialogBuilder().setNeutralButton(
+						R.string.all, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								selectAllInterest(tags);
+							}
+						});
+				AlertDialog ad = multiSelectorDialog.getDialogBuilder()
+						.create();
 				ad.show();
 			}
 		});
+	}
 
+	private void selectAllInterest(ArrayList<String> tags) {
+		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+		Editor edit = spf.edit();
+		for (String tag : tags) {
+			edit.putBoolean(tag, true);
+		}
+		edit.commit();
+	}
+
+	private void selectNoInterests(ArrayList<String> tags) {
+		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+		Editor edit = spf.edit();
+		for (String tag : tags) {
+			edit.putBoolean(tag, false);
+		}
+		edit.commit();
+	}
+
+	private void updateInterests(ArrayList<String> tags) {
+		SharedPreferences spf = getSharedPreferences("InterestPrefs", 0);
+		Editor edit = spf.edit();
+		for (String tag : tags) {
+			edit.putBoolean(tag, false);
+		}
+		for (Object o : multiSelectorDialog.getSelectedItems()) {
+			edit.putBoolean(tags.get((Integer) o), true);
+		}
+		edit.commit();
 	}
 
 	private void preconfigureInterests() {
